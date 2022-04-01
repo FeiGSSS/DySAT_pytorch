@@ -42,6 +42,7 @@ class StructuralAttentionLayer(nn.Module):
         if self.residual:
             self.lin_residual = nn.Linear(input_dim, n_heads * self.out_dim, bias=False)
 
+        self.xavier_init()
 
     def forward(self, graph):
         graph = copy.deepcopy(graph)
@@ -73,6 +74,10 @@ class StructuralAttentionLayer(nn.Module):
         graph.x = out
         return graph
 
+    def xavier_init(self):
+        nn.init.xavier_uniform_(self.att_l)
+        nn.init.xavier_uniform_(self.att_r)
+
         
 class TemporalAttentionLayer(nn.Module):
     def __init__(self, 
@@ -96,6 +101,7 @@ class TemporalAttentionLayer(nn.Module):
         # dropout 
         self.attn_dp = nn.Dropout(attn_drop)
         self.xavier_init()
+
 
     def forward(self, inputs):
         """In:  attn_outputs (of StructuralAttentionLayer at each snapshot):= [N, T, F]"""
